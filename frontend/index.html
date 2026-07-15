@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NaviHab - Подключение агента</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f5f7fa; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
+        h1 { color: #2d3748; margin-bottom: 1rem; }
+        p { color: #718096; margin-bottom: 2rem; }
+        button { background: #3182ce; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #2b6cb0; }
+        .success { color: #38a169; font-weight: bold; margin-top: 1rem; display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔗 Подключение AI-агента</h1>
+        <p>AI-агент запрашивает разрешение на деплой сайтов на ваш сервер NaviHab.</p>
+        <button id="approveBtn">Разрешить подключение</button>
+        <div id="successMsg" class="success">✅ Подключение успешно одобрено!<br>Вы можете закрыть это окно.</div>
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        document.getElementById('approveBtn').addEventListener('click', async () => {
+            if (!code) { alert('Код не найден в URL'); return; }
+            try {
+                const response = await fetch(`http://localhost:8000/api/v1/agent-connections/${code}/approve`, { method: 'POST' });
+                if (response.ok) {
+                    document.getElementById('approveBtn').style.display = 'none';
+                    document.getElementById('successMsg').style.display = 'block';
+                } else {
+                    alert('Ошибка при одобрении');
+                }
+            } catch (e) {
+                alert('Ошибка сети. Убедитесь, что backend запущен.');
+            }
+        });
+    </script>
+</body>
+</html>
